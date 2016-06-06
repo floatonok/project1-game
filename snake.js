@@ -37,14 +37,15 @@ var snake = {
 };
 
 function initGame () {
+  gameLoop = setInterval(paintSnake, 60);
 }
-// initGame();
+initGame();
 
 // Initialise Snake
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
-  var startLength = 10;
+  var startLength = 20;
   for (var i = snake.posX + (startLength - 1); i >= snake.posX; i--) {
     snake.bodyArray.push({x: i, y: snake.posY});
   }
@@ -54,25 +55,46 @@ function initSnake () {
 function paintSnake () {
   paintCanvas();
   updateSnake();
+  createFood();
+  paintCell(foodX, foodY, '#962D3E', '#962D3E');
   for (var i = 0; i < snake.bodyArray.length; i++) {
     var xyCor = snake.bodyArray[i];
-    console.log(xyCor);
     paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
   }
+}
+// Function update snake
+// Pop out tail (last array) and put it to the head
+function updateSnake () {
+  var headX = snake.bodyArray[0].x;
+  var headY = snake.bodyArray[0].y;
+  if (snake.direction === 'up') headY--;
+  if (snake.direction === 'down') headY++;
+  if (snake.direction === 'left') headX--;
+  if (snake.direction === 'right') headX++;
 
-  // Function update snake
-  // Pop out tail (last array) and put it to the head
-  function updateSnake () {
-    var headX = snake.bodyArray[0].x;
-    var headY = snake.bodyArray[0].y;
-    if (snake.direction === 'up') headY--;
-    if (snake.direction === 'down') headY++;
-    if (snake.direction === 'left') headX--;
-    if (snake.direction === 'right') headX++;
+  snake.bodyArray.pop();
+  snake.bodyArray.unshift({x: headX, y: headY});
 
-    snake.bodyArray.pop();
-    snake.bodyArray.unshift({x: headX, y: headY});
+  if (headX === foodX && headY === foodY) {
+    snake.bodyArray.unshift({x: foodX, y: foodY});
+    foodX = Math.round(Math.random() * (width - cellSize) / cellSize);
+    foodY = Math.round(Math.random() * (height - cellSize) / cellSize);
+    createFood();
   }
+
+  // for (var i = 0; i < snake.bodyArray.length; i++) {
+  //   if (headX === snake.bodyArray[i].x && headY === snake.bodyArray[i].y) {
+  //     initGame();
+    // }
+  // }
+}
+
+// Randomise Food
+
+var foodX = Math.round(Math.random() * (width - cellSize) / cellSize);
+var foodY = Math.round(Math.random() * (height - cellSize) / cellSize);
+function createFood () {
+  paintCell(foodX, foodY, '#962D3E', '#962D3E');
 }
 
 // Function key directions
@@ -87,19 +109,18 @@ document.onkeydown = function (event) {
   updateSnake();
 };
 
-gameLoop = setInterval(paintSnake, 60);
-
-// Randomise Food
-function randomFood () {
-
-}
 // Food as object constructor
 // Create new food everytime snake collides into food or game over
-
-// Function wall collision
-
-// Function Food collision
-
-// Function self collision
+function checkCollision () {
+  // Food Collision
+  if (headX === foodX && headY === foodY) {
+    snake.bodyArray.unshift({x: foodX, y: foodY});
+    foodX = Math.round(Math.random() * (width - cellSize) / cellSize);
+    foodY = Math.round(Math.random() * (height - cellSize) / cellSize);
+    createFood();
+  }
+  // Wall Collision
+  // Self Collision
+}
 
 // Reset Function

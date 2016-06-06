@@ -89,10 +89,10 @@ function updateSnake () {
     }
   }
   for (var i = 0; i < snake.bodyArray.length; i++) {
-    if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 1;
-    if (snake.bodyArray[i].x === 0) snake.bodyArray[i].x = Math.round(width / cellSize);
-    if (snake.bodyArray[i].y === Math.round(height / cellSize)) snake.bodyArray[i].y = 1;
-    if (snake.bodyArray[i].y === 0) snake.bodyArray[i].y = Math.round(height / cellSize);
+    if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 0;
+    if (snake.bodyArray[i].x === (-1)) snake.bodyArray[i].x = Math.round(width / cellSize) - 1;
+    if (snake.bodyArray[i].y === Math.round(height / cellSize) + 1) snake.bodyArray[i].y = 0;
+    if (snake.bodyArray[i].y === (-1)) snake.bodyArray[i].y = Math.round(height / cellSize) + 1;
   }
 }
 

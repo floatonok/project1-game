@@ -45,7 +45,7 @@ initGame();
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
-  var startLength = 20;
+  var startLength = 5;
   for (var i = snake.posX + (startLength - 1); i >= snake.posX; i--) {
     snake.bodyArray.push({x: i, y: snake.posY});
   }
@@ -74,6 +74,7 @@ function updateSnake () {
 
   snake.bodyArray.pop();
   snake.bodyArray.unshift({x: headX, y: headY});
+  console.log('X: ' + headX + '  Y: ' + headY);
 
   if (headX === foodX && headY === foodY) {
     snake.bodyArray.unshift({x: foodX, y: foodY});
@@ -82,15 +83,20 @@ function updateSnake () {
     createFood();
   }
 
-  // for (var i = 0; i < snake.bodyArray.length; i++) {
-  //   if (headX === snake.bodyArray[i].x && headY === snake.bodyArray[i].y) {
-  //     initGame();
-    // }
-  // }
+  for (var j = 2; j < snake.bodyArray.length; j++) {
+    if (headX === snake.bodyArray[j].x && headY === snake.bodyArray[j].y) {
+      clearInterval(gameLoop);
+    }
+  }
+  for (var i = 0; i < snake.bodyArray.length; i++) {
+    if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 1;
+    if (snake.bodyArray[i].x === 0) snake.bodyArray[i].x = Math.round(width / cellSize);
+    if (snake.bodyArray[i].y === Math.round(height / cellSize)) snake.bodyArray[i].y = 1;
+    if (snake.bodyArray[i].y === 0) snake.bodyArray[i].y = Math.round(height / cellSize);
+  }
 }
 
 // Randomise Food
-
 var foodX = Math.round(Math.random() * (width - cellSize) / cellSize);
 var foodY = Math.round(Math.random() * (height - cellSize) / cellSize);
 function createFood () {
@@ -105,22 +111,10 @@ document.onkeydown = function (event) {
   if (key === 37 && snake.direction !== 'right') snake.direction = 'left';
   if (key === 39 && snake.direction !== 'left') snake.direction = 'right';
   if (key) event.preventDefault();
-  console.log(snake.direction);
   updateSnake();
 };
 
 // Food as object constructor
 // Create new food everytime snake collides into food or game over
-function checkCollision () {
-  // Food Collision
-  if (headX === foodX && headY === foodY) {
-    snake.bodyArray.unshift({x: foodX, y: foodY});
-    foodX = Math.round(Math.random() * (width - cellSize) / cellSize);
-    foodY = Math.round(Math.random() * (height - cellSize) / cellSize);
-    createFood();
-  }
-  // Wall Collision
-  // Self Collision
-}
 
 // Reset Function

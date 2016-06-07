@@ -25,8 +25,8 @@ function paintCell (xCor, yCor, colorFill, colorStroke) {
 
 var cellSize = 15;
 var score = 0;
-var gameLoop;
 var food = {x: null, y: null};
+var running = true;
 // var lastTime = 0;
 
 var snake = {
@@ -45,7 +45,7 @@ var snake = {
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
-  var startLength = 5;
+  var startLength = 1;
   for (var i = snake.posX + (startLength - 1); i >= snake.posX; i--) {
     snake.bodyArray.push({x: i, y: snake.posY});
   }
@@ -78,8 +78,12 @@ function updateSnake () {
   for (var h = 0; h < obstacleSquare.length; h++) {
     for (var g = 0; g < obstacleSquare[h].array.length; g++) {
       var xyObstacle = obstacleSquare[h].array[g];
+      if (xyObstacle.x === food.x && xyObstacle.y === food.y) {
+        randomFood();
+        createFood();
+      }
       if (headX === xyObstacle.x && headY === xyObstacle.y) {
-        clearInterval(gameLoop);
+        running = false;
         return;
       }
     }
@@ -99,7 +103,7 @@ function updateSnake () {
 
   for (var j = 2; j < snake.bodyArray.length; j++) {
     if (headX === snake.bodyArray[j].x && headY === snake.bodyArray[j].y) {
-      clearInterval(gameLoop);
+      running = false;
     }
   }
 
@@ -123,6 +127,7 @@ function randomFood () {
   }
 }
 randomFood();
+console.log(food);
 function createFood () {
   // console.log(food);
   paintCell(food.x, food.y, '#962D3E', '#962D3E');
@@ -171,20 +176,22 @@ document.onkeydown = function (event) {
   updateSnake();
 };
 
-var fps = 30;
+var fps = 20;
 function paint () {
-  setTimeout(function () {
-    requestAnimationFrame(paint);
-    // Drawing code goes here
-    paintCanvas();
-    createFood();
-    paintObstacle();
-    updateSnake();
-    for (var i = 0; i < snake.bodyArray.length; i++) {
-      var xyCor = snake.bodyArray[i];
-      paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
-    }
-  }, 1000 / fps);
+  if (running) {
+    setTimeout(function () {
+      requestAnimationFrame(paint);
+      // Drawing code goes here
+      paintCanvas();
+      createFood();
+      paintObstacle();
+      updateSnake();
+      for (var i = 0; i < snake.bodyArray.length; i++) {
+        var xyCor = snake.bodyArray[i];
+        paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
+      }
+    }, 1000 / fps);
+  }
 }
 
 paint();

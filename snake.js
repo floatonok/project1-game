@@ -27,6 +27,7 @@ var cellSize = 15;
 var score = 0;
 var gameLoop;
 var food = {x: null, y: null};
+// var lastTime = 0;
 
 var snake = {
   bodyArray: [],
@@ -35,12 +36,10 @@ var snake = {
   direction: 'right'
 };
 
-// var lastTime = 0;
-
-function initGame () {
-  gameLoop = setInterval(paintSnake, 40);
-}
-initGame();
+// function initGame () {
+//   // gameLoop = setInterval(paintSnake, 40);
+// }
+// initGame();
 
 // Initialise Snake
 // For loop counting down so first object will be the head of snake
@@ -53,19 +52,19 @@ function initSnake () {
 }
 
 // Function paint snake
-function paintSnake () {
-  // var now = new Date().getTime();
-  // console.log(now - lastTime);
-  // lastTime = now;
-  paintCanvas();
-  createFood();
-  paintObstacle();
-  updateSnake();
-  for (var i = 0; i < snake.bodyArray.length; i++) {
-    var xyCor = snake.bodyArray[i];
-    paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
-  }
-}
+// function paintSnake () {
+//   // var now = new Date().getTime();
+//   // console.log(now - lastTime);
+//   // lastTime = now;
+//   paintCanvas();
+//   createFood();
+//   paintObstacle();
+//   updateSnake();
+//   for (var i = 0; i < snake.bodyArray.length; i++) {
+//     var xyCor = snake.bodyArray[i];
+//     paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
+//   }
+// }
 // Function update snake
 // Pop out tail (last array) and put it to the head
 function updateSnake () {
@@ -75,7 +74,7 @@ function updateSnake () {
   if (snake.direction === 'down') headY++;
   if (snake.direction === 'left') headX--;
   if (snake.direction === 'right') headX++;
-
+// Obstacle Collision
   for (var h = 0; h < obstacleSquare.length; h++) {
     for (var g = 0; g < obstacleSquare[h].array.length; g++) {
       var xyObstacle = obstacleSquare[h].array[g];
@@ -103,16 +102,6 @@ function updateSnake () {
       clearInterval(gameLoop);
     }
   }
-
-  // OBSTACLES COLLISION
-  // for (var h = 0; h < obstacleSquare.length; h++) {
-  //   for (var g = 0; g < obstacleSquare[h].array.length; g++) {
-  //     var xyObstacle = obstacleSquare[h].array[g];
-  //     if (headX === xyObstacle.x && headY === xyObstacle.y) {
-  //       clearInterval(gameLoop);
-  //     }
-  //   }
-  // }
 
   for (var i = 0; i < snake.bodyArray.length; i++) {
     if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 0;
@@ -181,3 +170,21 @@ document.onkeydown = function (event) {
   if (key) event.preventDefault();
   updateSnake();
 };
+
+var fps = 30;
+function paint () {
+  setTimeout(function () {
+    requestAnimationFrame(paint);
+    // Drawing code goes here
+    paintCanvas();
+    createFood();
+    paintObstacle();
+    updateSnake();
+    for (var i = 0; i < snake.bodyArray.length; i++) {
+      var xyCor = snake.bodyArray[i];
+      paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
+    }
+  }, 1000 / fps);
+}
+
+paint();

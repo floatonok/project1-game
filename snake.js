@@ -120,8 +120,8 @@ function Obstacle (obsLength, posX, posY) {
 }
 
 var obstacle0 = new Obstacle(width / cellSize / 1.2, 0, 10);
-var obstacle1 = new Obstacle(width / cellSize / 1.2, 0, 25);
-var obstacle2 = new Obstacle(width / cellSize / 1.2, 0, 40);
+var obstacle1 = new Obstacle(width / cellSize / 1.2, 40, 25);
+var obstacle2 = new Obstacle(width / cellSize / 1.2, 10, 40);
 
 var obstacleSquare = [obstacle0, obstacle1, obstacle2];
 
@@ -143,7 +143,7 @@ function updateObstacle () {
     }
   }
 }
-var animateObstacle = setInterval(updateObstacle, 200);
+var animateObstacle = setInterval(updateObstacle, 100);
 
 function paintObstacle () {
   for (var h = 0; h < obstacleSquare.length; h++) {

@@ -36,12 +36,6 @@ var snake = {
   direction: 'right'
 };
 
-// function initGame () {
-//   // gameLoop = setInterval(paintSnake, 40);
-// }
-// initGame();
-
-// Initialise Snake
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
@@ -51,22 +45,6 @@ function initSnake () {
   }
 }
 
-// Function paint snake
-// function paintSnake () {
-//   // var now = new Date().getTime();
-//   // console.log(now - lastTime);
-//   // lastTime = now;
-//   paintCanvas();
-//   createFood();
-//   paintObstacle();
-//   updateSnake();
-//   for (var i = 0; i < snake.bodyArray.length; i++) {
-//     var xyCor = snake.bodyArray[i];
-//     paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
-//   }
-// }
-// Function update snake
-// Pop out tail (last array) and put it to the head
 function updateSnake () {
   var headX = snake.bodyArray[0].x;
   var headY = snake.bodyArray[0].y;
@@ -91,8 +69,7 @@ function updateSnake () {
 
   snake.bodyArray.pop();
   snake.bodyArray.unshift({x: headX, y: headY});
-  // console.log('X: ' + headX + '  Y: ' + headY);
-
+  // Eating Food
   if (headX === food.x && headY === food.y) {
     snake.bodyArray.unshift({x: food.x, y: food.y});
     food.x = Math.round(Math.random() * (width - cellSize) / cellSize);
@@ -100,13 +77,13 @@ function updateSnake () {
     score++;
     createFood();
   }
-
+  // Self Collision
   for (var j = 2; j < snake.bodyArray.length; j++) {
     if (headX === snake.bodyArray[j].x && headY === snake.bodyArray[j].y) {
       running = false;
     }
   }
-
+  // Prevents the snake from escaping the canvas
   for (var i = 0; i < snake.bodyArray.length; i++) {
     if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 0;
     if (snake.bodyArray[i].x === (-1)) snake.bodyArray[i].x = Math.round(width / cellSize) - 1;
@@ -115,6 +92,7 @@ function updateSnake () {
   }
   return snake.bodyArray;
 }
+var gameLoop = setInterval(updateSnake, 40);
 
 // Randomise Food
 function randomFood () {
@@ -141,9 +119,9 @@ function Obstacle (obsLength, posX, posY) {
   this.posY = posY;
 }
 
-var obstacle0 = new Obstacle(height / cellSize, 20, 10);
-var obstacle1 = new Obstacle(height / cellSize, 20, 20);
-var obstacle2 = new Obstacle(height / cellSize, 20, 30);
+var obstacle0 = new Obstacle(width / cellSize / 1.2, 0, 10);
+var obstacle1 = new Obstacle(width / cellSize / 1.2, 0, 25);
+var obstacle2 = new Obstacle(width / cellSize / 1.2, 0, 40);
 
 var obstacleSquare = [obstacle0, obstacle1, obstacle2];
 
@@ -153,6 +131,20 @@ for (var h = 0; h < obstacleSquare.length; h++) {
   }
 }
 
+function updateObstacle () {
+  for (var h = 0; h < obstacleSquare.length; h++) {
+    for (var g = 0; g < obstacleSquare[h].array.length; g++) {
+      var xyObstacle = obstacleSquare[h].array[g];
+      xyObstacle.x++;
+      if (xyObstacle.x === Math.round(width / cellSize)) xyObstacle.x = 0;
+      if (xyObstacle.x === (-1)) xyObstacle.x = Math.round(width / cellSize) - 1;
+      if (xyObstacle.y === Math.round(height / cellSize) + 1) xyObstacle.y = 0;
+      if (xyObstacle.y === (-1)) xyObstacle.y = Math.round(height / cellSize) - 1;
+    }
+  }
+}
+var animateObstacle = setInterval(updateObstacle, 200);
+
 function paintObstacle () {
   for (var h = 0; h < obstacleSquare.length; h++) {
     for (var g = 0; g < obstacleSquare[h].array.length; g++) {
@@ -161,8 +153,23 @@ function paintObstacle () {
     }
   }
 }
-paintObstacle();
-// gameLoop = setInterval(paintObstacle, 40);
+
+function paint () {
+  if (running) {
+    requestAnimationFrame(paint);
+    // Drawing code goes here
+    paintCanvas();
+    createFood();
+    paintObstacle();
+    // updateSnake();
+    // paint snake
+    for (var i = 0; i < snake.bodyArray.length; i++) {
+      var xyCor = snake.bodyArray[i];
+      paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
+    }
+  }
+}
+paint();
 
 // Function key directions
 document.onkeydown = function (event) {
@@ -173,25 +180,40 @@ document.onkeydown = function (event) {
   if (key === 39 && snake.direction !== 'left') snake.direction = 'right';
   if (key === 32) location.reload();
   if (key) event.preventDefault();
-  updateSnake();
 };
 
-var fps = 20;
-function paint () {
-  if (running) {
-    setTimeout(function () {
-      requestAnimationFrame(paint);
-      // Drawing code goes here
-      paintCanvas();
-      createFood();
-      paintObstacle();
-      updateSnake();
-      for (var i = 0; i < snake.bodyArray.length; i++) {
-        var xyCor = snake.bodyArray[i];
-        paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
-      }
-    }, 1000 / fps);
-  }
-}
+// ========================================================================================
+// function initGame () {
+//   // gameLoop = setInterval(paintSnake, 40);
+// }
+// initGame();
 
-paint();
+// Function paint snake
+// function paintSnake () {
+//   // var now = new Date().getTime();
+//   // console.log(now - lastTime);
+//   // lastTime = now;
+//   paintCanvas();
+//   createFood();
+//   paintObstacle();
+//   updateSnake();
+//   for (var i = 0; i < snake.bodyArray.length; i++) {
+//     var xyCor = snake.bodyArray[i];
+//     paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
+//   }
+// }
+
+// var fpsObstacle = 1;
+// function paintObstacle () {
+//   setTimeout(function () {
+//     requestAnimationFrame(paintObstacle);
+//     for (var h = 0; h < obstacleSquare.length; h++) {
+//       for (var g = 0; g < obstacleSquare[h].array.length; g++) {
+//         var xyObstacle = obstacleSquare[h].array[g];
+//         xyObstacle.x++;
+//         paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+//       }
+//     }
+//   }, 1000 / fpsObstacle);
+// }
+// paintObstacle();

@@ -54,9 +54,9 @@ function updateSnake () {
   if (snake.direction === 'left') headX--;
   if (snake.direction === 'right') headX++;
 // Obstacle Collision
-  for (var h = 0; h < obstacleSquare.length; h++) {
-    for (var g = 0; g < obstacleSquare[h].array.length; g++) {
-      var xyObstacle = obstacleSquare[h].array[g];
+  for (var h = 0; h < totalObstacles.length; h++) {
+    for (var g = 0; g < totalObstacles[h].array.length; g++) {
+      var xyObstacle = totalObstacles[h].array[g];
       if (xyObstacle.x === food.x && xyObstacle.y === food.y) {
         randomFood();
         createFood();
@@ -97,7 +97,7 @@ function updateSnake () {
   }
 
   if (headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
-    // Initialise obstacle
+    initObstacleScatter();
   }
 
   if (headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
@@ -146,6 +146,34 @@ var obstacle1 = new Obstacle(width / cellSize / 1.2, 40, 25);
 var obstacle2 = new Obstacle(width / cellSize / 1.2, 10, 40);
 
 var obstacleSquare = [obstacle0, obstacle1, obstacle2];
+var obstacleScatter = [];
+var totalObstacles = [];
+console.log('TOTAL OBSTACLE ' + totalObstacles);
+
+
+function initObstacleScatter () {
+  var numOfScatter = 20;
+  for (var i = 0; i < numOfScatter; i++) {
+    var scatterX = Math.round(Math.random() * (width - cellSize) / cellSize);
+    var scatterY = Math.round(Math.random() * (height - cellSize) / cellSize);
+    var obstacle3 = new Obstacle(cellSize, scatterX, scatterY);
+    obstacleScatter.push(obstacle3);
+  }
+  for (var j = 0; j < numOfScatter; j++) {
+    obstacleScatter[j].array.push({x: obstacleScatter[j].posX, y: obstacleScatter[j].posY});
+    console.log(obstacleScatter[j].array);
+  }
+  totalObstacles = obstacleSquare.concat(obstacleScatter);
+}
+
+function paintObstacleScatter () {
+  for (var h = 0; h < obstacleScatter.length; h++) {
+    for (var g = 0; g < obstacleScatter[h].array.length; g++) {
+      var xyObstacle = obstacleScatter[h].array[g];
+      paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+    }
+  }
+}
 
 var initObsSquare = false;
 function initObstacleSquare () {
@@ -171,7 +199,7 @@ function initObstacleSquare () {
   var animateObstacle = setInterval(updateObstacle, 100);
 }
 
-function paintObstacle () {
+function paintObstacleSquare () {
   for (var h = 0; h < obstacleSquare.length; h++) {
     for (var g = 0; g < obstacleSquare[h].array.length; g++) {
       var xyObstacle = obstacleSquare[h].array[g];
@@ -186,7 +214,6 @@ function randomObstacleFood () {
     var obstacleFoodX = Math.round(Math.random() * (width - cellSize) / cellSize);
     var obstacleFoodY = Math.round(Math.random() * (height - cellSize) / cellSize);
     obstacleFood.push({x: obstacleFoodX, y: obstacleFoodY});
-    console.log(obstacleFood);
   }
   return obstacleFood;
 }
@@ -205,7 +232,8 @@ function paint () {
     paintCanvas();
     createFood();
     paintObstacleFood();
-    paintObstacle();
+    paintObstacleSquare();
+    paintObstacleScatter();
     // updateSnake();
     // paint snake
     for (var i = 0; i < snake.bodyArray.length; i++) {

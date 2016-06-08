@@ -66,7 +66,7 @@ function updateSnake () {
         return;
       }
       // Self Collision
-      for (var j = 2; j < snake.bodyArray.length; j++) {
+      for (var j = 0; j < snake.bodyArray.length; j++) {
         if (snake.bodyArray[j].x === xyObstacle.x && snake.bodyArray[j].y === xyObstacle.y) {
           running = false;
           return;
@@ -100,13 +100,10 @@ function updateSnake () {
     initObstacleScatter();
   }
 
-  if (headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
-    // Initialise obstacle
+  if (headX === obstacleFood[2].x && headY === obstacleFood[2].y) {
+    initObstacleVertical();
   }
 
-  if (headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
-    // Initialise obstacle
-  }
   // Prevents the snake from escaping the canvas
   for (var i = 0; i < snake.bodyArray.length; i++) {
     if (snake.bodyArray[i].x === Math.round(width / cellSize)) snake.bodyArray[i].x = 0;
@@ -140,40 +137,43 @@ function Obstacle (obsLength, posX, posY) {
   this.posX = posX;
   this.posY = posY;
 }
+var totalObstacles = [];
 
 var obstacle0 = new Obstacle(width / cellSize / 1.2, 0, 10);
 var obstacle1 = new Obstacle(width / cellSize / 1.2, 40, 25);
 var obstacle2 = new Obstacle(width / cellSize / 1.2, 10, 40);
 
-var obstacleSquare = [obstacle0, obstacle1, obstacle2];
-var obstacleScatter = [];
-var totalObstacles = [];
-console.log('TOTAL OBSTACLE ' + totalObstacles);
+var obstacle4 = new Obstacle(10, 10, 0);
+var obstacle5 = new Obstacle(10, 10, 20);
+var obstacle6 = new Obstacle(10, 10, 40);
+var obstacle7 = new Obstacle(10, 45, 0);
+var obstacle8 = new Obstacle(10, 45, 20);
+var obstacle9 = new Obstacle(10, 45, 40);
+var obstacle10 = new Obstacle(10, 80, 0);
+var obstacle11 = new Obstacle(10, 80, 20);
+var obstacle12 = new Obstacle(10, 80, 40);
 
+var obstacleVertical = [obstacle4, obstacle5, obstacle6, obstacle7, obstacle8, obstacle9, obstacle10, obstacle11, obstacle12];
 
-function initObstacleScatter () {
-  var numOfScatter = 20;
-  for (var i = 0; i < numOfScatter; i++) {
-    var scatterX = Math.round(Math.random() * (width - cellSize) / cellSize);
-    var scatterY = Math.round(Math.random() * (height - cellSize) / cellSize);
-    var obstacle3 = new Obstacle(cellSize, scatterX, scatterY);
-    obstacleScatter.push(obstacle3);
+function initObstacleVertical () {
+  for (var h = 0; h < obstacleVertical.length; h++) {
+    for (var i = obstacleVertical[h].posY; i < obstacleVertical[h].obsLength + obstacleVertical[h].posY; i++) {
+      obstacleVertical[h].array.push({x: obstacleVertical[h].posX, y: i});
+    }
   }
-  for (var j = 0; j < numOfScatter; j++) {
-    obstacleScatter[j].array.push({x: obstacleScatter[j].posX, y: obstacleScatter[j].posY});
-    console.log(obstacleScatter[j].array);
-  }
-  totalObstacles = obstacleSquare.concat(obstacleScatter);
+  totalObstacles = obstacleSquare.concat(obstacleScatter, obstacleVertical);
 }
 
-function paintObstacleScatter () {
-  for (var h = 0; h < obstacleScatter.length; h++) {
-    for (var g = 0; g < obstacleScatter[h].array.length; g++) {
-      var xyObstacle = obstacleScatter[h].array[g];
+function paintObstacleVertical () {
+  for (var h = 0; h < obstacleVertical.length; h++) {
+    for (var g = 0; g < obstacleVertical[h].array.length; g++) {
+      var xyObstacle = obstacleVertical[h].array[g];
       paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
     }
   }
 }
+
+var obstacleSquare = [obstacle0, obstacle1, obstacle2];
 
 var initObsSquare = false;
 function initObstacleSquare () {
@@ -196,6 +196,7 @@ function initObstacleSquare () {
     }
   }
   initObsSquare = true;
+  totalObstacles = obstacleSquare.concat(obstacleScatter, obstacleVertical);
   var animateObstacle = setInterval(updateObstacle, 100);
 }
 
@@ -208,8 +209,32 @@ function paintObstacleSquare () {
   }
 }
 
+var obstacleScatter = [];
+function initObstacleScatter () {
+  var numOfScatter = 40;
+  for (var i = 0; i < numOfScatter; i++) {
+    var scatterX = Math.round(Math.random() * (width - cellSize) / cellSize);
+    var scatterY = Math.round(Math.random() * (height - cellSize) / cellSize);
+    var obstacle3 = new Obstacle(cellSize, scatterX, scatterY);
+    obstacleScatter.push(obstacle3);
+  }
+  for (var j = 0; j < numOfScatter; j++) {
+    obstacleScatter[j].array.push({x: obstacleScatter[j].posX, y: obstacleScatter[j].posY});
+    console.log(obstacleScatter[j].array);
+  }
+  totalObstacles = obstacleSquare.concat(obstacleScatter, obstacleVertical);
+}
+
+function paintObstacleScatter () {
+  for (var h = 0; h < obstacleScatter.length; h++) {
+    for (var g = 0; g < obstacleScatter[h].array.length; g++) {
+      var xyObstacle = obstacleScatter[h].array[g];
+      paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+    }
+  }
+}
 function randomObstacleFood () {
-  var numOfObsFood = 4;
+  var numOfObsFood = 3;
   for (var i = 0; i < numOfObsFood; i++) {
     var obstacleFoodX = Math.round(Math.random() * (width - cellSize) / cellSize);
     var obstacleFoodY = Math.round(Math.random() * (height - cellSize) / cellSize);
@@ -234,6 +259,7 @@ function paint () {
     paintObstacleFood();
     paintObstacleSquare();
     paintObstacleScatter();
+    paintObstacleVertical();
     // updateSnake();
     // paint snake
     for (var i = 0; i < snake.bodyArray.length; i++) {

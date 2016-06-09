@@ -8,6 +8,11 @@ var height = window.innerHeight;
 canvas.height = height;
 canvas.width = width;
 
+var bgMusic = new Audio ('./aWalk.mp3');
+var obstacleMusic = new Audio ('./obstacle.mp3');
+var eatMusic = new Audio ('./gotItem.mp3');
+bgMusic.play();
+
 // Paint canvas
 function paintCanvas () {
   ctx.fillStyle = '#343642';
@@ -41,7 +46,7 @@ var snake = {
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
-  var startLength = 20;
+  var startLength = 5;
   for (var i = snake.posX + (startLength - 1); i >= snake.posX; i--) {
     snake.bodyArray.push({x: i, y: snake.posY});
   }
@@ -88,6 +93,8 @@ function updateSnake () {
   snake.bodyArray.unshift({x: headX, y: headY});
   // Eating Food
   if (headX === food.x && headY === food.y) {
+    eatMusic.currentTime = 0;
+    eatMusic.play();
     snake.bodyArray.unshift({x: food.x, y: food.y});
     food.x = Math.round(Math.random() * (width - cellSize) / cellSize);
     food.y = Math.round(Math.random() * (height - cellSize) / cellSize);
@@ -111,6 +118,8 @@ function updateSnake () {
   }
 
   if (!initObsSquare && headX === obstacleFood[0].x && headY === obstacleFood[0].y) {
+    obstacleMusic.currentTime = 0;
+    obstacleMusic.play();
     initObstacleSquare();
     hitObstacle = false;
     setTimeout(function () {
@@ -119,7 +128,8 @@ function updateSnake () {
   }
 
   if (!initObsScatter && headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
-    console.log('obstacle scatter');
+    obstacleMusic.currentTime = 0;
+    obstacleMusic.play();
     initObstacleScatter();
     hitObstacle = false;
     setTimeout(function () {
@@ -128,7 +138,8 @@ function updateSnake () {
   }
 
   if (!initObsVertical && headX === obstacleFood[2].x && headY === obstacleFood[2].y) {
-    console.log('obstacle vertical');
+    obstacleMusic.currentTime = 0;
+    obstacleMusic.play();
     initObstacleVertical();
     hitObstacle = false;
     setTimeout(function () {

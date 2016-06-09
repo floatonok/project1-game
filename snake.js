@@ -28,6 +28,7 @@ var score = 0;
 var food = {x: null, y: null};
 var running = true;
 var obstacleFood = [];
+var hitObstacle = true;
 // var lastTime = 0;
 
 var snake = {
@@ -40,7 +41,7 @@ var snake = {
 // For loop counting down so first object will be the head of snake
 initSnake();
 function initSnake () {
-  var startLength = 10;
+  var startLength = 20;
   for (var i = snake.posX + (startLength - 1); i >= snake.posX; i--) {
     snake.bodyArray.push({x: i, y: snake.posY});
   }
@@ -53,29 +54,31 @@ function updateSnake () {
   if (snake.direction === 'down') headY++;
   if (snake.direction === 'left') headX--;
   if (snake.direction === 'right') headX++;
-// Obstacle Collision
-  for (var h = 0; h < totalObstacles.length; h++) {
-    for (var g = 0; g < totalObstacles[h].array.length; g++) {
-      var xyObstacle = totalObstacles[h].array[g];
-      if (xyObstacle.x === food.x && xyObstacle.y === food.y) {
-        randomFood();
-        createFood();
-      }
-      if (headX === xyObstacle.x && headY === xyObstacle.y) {
-        running = false;
-        return;
-      }
-      // Self Collision
-      for (var j = 0; j < snake.bodyArray.length; j++) {
-        if (snake.bodyArray[j].x === xyObstacle.x && snake.bodyArray[j].y === xyObstacle.y) {
+  // Obstacle Collision
+  if (hitObstacle) {
+    for (var h = 0; h < totalObstacles.length; h++) {
+      for (var g = 0; g < totalObstacles[h].array.length; g++) {
+        var xyObstacle = totalObstacles[h].array[g];
+        if (xyObstacle.x === food.x && xyObstacle.y === food.y) {
+          randomFood();
+          createFood();
+        }
+        if (headX === xyObstacle.x && headY === xyObstacle.y) {
           running = false;
           return;
+        }
+        // Self Collision
+        for (var j = 0; j < snake.bodyArray.length; j++) {
+          if (snake.bodyArray[j].x === xyObstacle.x && snake.bodyArray[j].y === xyObstacle.y) {
+            running = false;
+            return;
+          }
         }
       }
     }
   }
-  for (var j = 2; j < snake.bodyArray.length; j++) {
-    if (headX === snake.bodyArray[j].x && headY === snake.bodyArray[j].y) {
+  for (var t = 2; t < snake.bodyArray.length; t++) {
+    if (headX === snake.bodyArray[t].x && headY === snake.bodyArray[t].y) {
       running = false;
       return;
     }
@@ -88,20 +91,49 @@ function updateSnake () {
     snake.bodyArray.unshift({x: food.x, y: food.y});
     food.x = Math.round(Math.random() * (width - cellSize) / cellSize);
     food.y = Math.round(Math.random() * (height - cellSize) / cellSize);
-    score++;
+    if (initObsSquare && initObsScatter && initObsVertical) {
+      score += 10;
+      return;
+    }
+    if (initObsSquare && initObsScatter && !initObsVertical || initObsSquare && initObsVertical && !initObsScatter || initObsVertical && initObsScatter && !initObsSquare ) {
+      score += 5;
+      return;
+    }
+    if (initObsSquare || initObsScatter || initObsVertical) {
+      score += 2;
+      return;
+    }
+    if (!initObsSquare && !initObsScatter && !initObsVertical) {
+      score++;
+      return;
+    }
     createFood();
   }
 
   if (!initObsSquare && headX === obstacleFood[0].x && headY === obstacleFood[0].y) {
     initObstacleSquare();
+    hitObstacle = false;
+    setTimeout(function () {
+      hitObstacle = true;
+    }, 5000);
   }
 
-  if (headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
+  if (!initObsScatter && headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
+    console.log('obstacle scatter');
     initObstacleScatter();
+    hitObstacle = false;
+    setTimeout(function () {
+      hitObstacle = true;
+    }, 5000);
   }
 
-  if (headX === obstacleFood[2].x && headY === obstacleFood[2].y) {
+  if (!initObsVertical && headX === obstacleFood[2].x && headY === obstacleFood[2].y) {
+    console.log('obstacle vertical');
     initObstacleVertical();
+    hitObstacle = false;
+    setTimeout(function () {
+      hitObstacle = true;
+    }, 5000);
   }
 
   // Prevents the snake from escaping the canvas
@@ -113,7 +145,7 @@ function updateSnake () {
   }
   return snake.bodyArray;
 }
-var gameLoop = setInterval(updateSnake, 50);
+var gameLoop = setInterval(updateSnake, 60);
 
 // Randomise Food
 function randomFood () {
@@ -155,12 +187,14 @@ var obstacle12 = new Obstacle(10, 80, 40);
 
 var obstacleVertical = [obstacle4, obstacle5, obstacle6, obstacle7, obstacle8, obstacle9, obstacle10, obstacle11, obstacle12];
 
+var initObsVertical = false;
 function initObstacleVertical () {
   for (var h = 0; h < obstacleVertical.length; h++) {
     for (var i = obstacleVertical[h].posY; i < obstacleVertical[h].obsLength + obstacleVertical[h].posY; i++) {
       obstacleVertical[h].array.push({x: obstacleVertical[h].posX, y: i});
     }
   }
+  initObsVertical = true;
   totalObstacles = obstacleSquare.concat(obstacleScatter, obstacleVertical);
 }
 
@@ -168,7 +202,7 @@ function paintObstacleVertical () {
   for (var h = 0; h < obstacleVertical.length; h++) {
     for (var g = 0; g < obstacleVertical[h].array.length; g++) {
       var xyObstacle = obstacleVertical[h].array[g];
-      paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+      paintCell(xyObstacle.x, xyObstacle.y, '#979C9C', '#979C9C');
     }
   }
 }
@@ -204,14 +238,15 @@ function paintObstacleSquare () {
   for (var h = 0; h < obstacleSquare.length; h++) {
     for (var g = 0; g < obstacleSquare[h].array.length; g++) {
       var xyObstacle = obstacleSquare[h].array[g];
-      paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+      paintCell(xyObstacle.x, xyObstacle.y, '#979C9C', '#979C9C');
     }
   }
 }
 
+var initObsScatter = false;
 var obstacleScatter = [];
 function initObstacleScatter () {
-  var numOfScatter = 40;
+  var numOfScatter = 30;
   for (var i = 0; i < numOfScatter; i++) {
     var scatterX = Math.round(Math.random() * (width - cellSize) / cellSize);
     var scatterY = Math.round(Math.random() * (height - cellSize) / cellSize);
@@ -222,6 +257,7 @@ function initObstacleScatter () {
     obstacleScatter[j].array.push({x: obstacleScatter[j].posX, y: obstacleScatter[j].posY});
     console.log(obstacleScatter[j].array);
   }
+  initObsScatter = true;
   totalObstacles = obstacleSquare.concat(obstacleScatter, obstacleVertical);
 }
 
@@ -229,7 +265,7 @@ function paintObstacleScatter () {
   for (var h = 0; h < obstacleScatter.length; h++) {
     for (var g = 0; g < obstacleScatter[h].array.length; g++) {
       var xyObstacle = obstacleScatter[h].array[g];
-      paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
+      paintCell(xyObstacle.x, xyObstacle.y, '#979C9C', '#979C9C');
     }
   }
 }
@@ -246,7 +282,7 @@ randomObstacleFood();
 
 function paintObstacleFood () {
   for (var i = 0; i < obstacleFood.length; i++) {
-    paintCell(obstacleFood[i].x, obstacleFood[i].y, '#979C9C', '#979C9C');
+    paintCell(obstacleFood[i].x, obstacleFood[i].y, '#348899', '#348899');
   }
 }
 
@@ -266,6 +302,9 @@ function paint () {
       var xyCor = snake.bodyArray[i];
       paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
     }
+    ctx.font = '20px sans-serif';
+    ctx.fillStyle = '#F2EBC7';
+    ctx.fillText(score, 5, 25);
   }
 }
 paint();

@@ -10,18 +10,16 @@ canvas.width = width;
 
 var gameOverText = $('#gameOver');
 
-var bgMusic = new Audio('./aWalk.mp3');
-var eatMusic = new Audio('./gotItem.mp3');
-var youDie = new Audio('./gameOver.wav');
-var loopOne = new Audio('./loopOne.mp3');
-var loopTwo = new Audio('./loopTwo.mp3');
-var loopThree = new Audio('./loopThree.mp3');
+// Audio
+var eatMusic = new Audio('./Audio/gotItem.mp3');
+var youDie = new Audio('./Audio/gameOver.wav');
+var loopOne = new Audio('./Audio/loopOne.mp3');
+var loopTwo = new Audio('./Audio/loopTwo.mp3');
+var loopThree = new Audio('./Audio/loopThree.mp3');
 loopOne.loop = true;
 loopTwo.loop = true;
 loopThree.loop = true;
 youDie.volume = 1.0;
-bgMusic.volume = 0.2;
-// bgMusic.play();
 
 // Paint canvas
 function paintCanvas () {
@@ -44,7 +42,6 @@ var food = {x: null, y: null};
 var running = true;
 var obstacleFood = [];
 var hitObstacle = true;
-// var lastTime = 0;
 
 var snake = {
   bodyArray: [],
@@ -127,7 +124,7 @@ function updateSnake () {
       score += 10;
       return;
     }
-    if (initObsSquare && initObsScatter && !initObsVertical || initObsSquare && initObsVertical && !initObsScatter || initObsVertical && initObsScatter && !initObsSquare ) {
+    if (initObsSquare && initObsScatter && !initObsVertical || initObsSquare && initObsVertical && !initObsScatter || initObsVertical && initObsScatter && !initObsSquare) {
       score += 5;
       return;
     }
@@ -191,7 +188,6 @@ function randomFood () {
 randomFood();
 
 function createFood () {
-  // console.log(food);
   paintCell(food.x, food.y, '#962D3E', '#962D3E');
 }
 
@@ -241,7 +237,6 @@ function paintObstacleVertical () {
 }
 
 var obstacleSquare = [obstacle0, obstacle1, obstacle2];
-
 var initObsSquare = false;
 function initObstacleSquare () {
   for (var h = 0; h < obstacleSquare.length; h++) {
@@ -319,7 +314,6 @@ function paintObstacleFood () {
   }
 }
 
-
 function paint () {
   if (running) {
     requestAnimationFrame(paint);
@@ -353,39 +347,3 @@ document.onkeydown = function (event) {
   if (key === 32) location.reload();
   if (key) event.preventDefault();
 };
-
-// ========================================================================================
-// function initGame () {
-//   // gameLoop = setInterval(paintSnake, 40);
-// }
-// initGame();
-
-// Function paint snake
-// function paintSnake () {
-//   // var now = new Date().getTime();
-//   // console.log(now - lastTime);
-//   // lastTime = now;
-//   paintCanvas();
-//   createFood();
-//   paintObstacle();
-//   updateSnake();
-//   for (var i = 0; i < snake.bodyArray.length; i++) {
-//     var xyCor = snake.bodyArray[i];
-//     paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
-//   }
-// }
-
-// var fpsObstacle = 1;
-// function paintObstacle () {
-//   setTimeout(function () {
-//     requestAnimationFrame(paintObstacle);
-//     for (var h = 0; h < obstacleSquare.length; h++) {
-//       for (var g = 0; g < obstacleSquare[h].array.length; g++) {
-//         var xyObstacle = obstacleSquare[h].array[g];
-//         xyObstacle.x++;
-//         paintCell(xyObstacle.x, xyObstacle.y, '#348899', '#348899');
-//       }
-//     }
-//   }, 1000 / fpsObstacle);
-// }
-// paintObstacle();

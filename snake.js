@@ -203,6 +203,8 @@ var totalObstacles = [];
 var obstacle0 = new Obstacle(width / cellSize / 1.2, 0, 10);
 var obstacle1 = new Obstacle(width / cellSize / 1.2, 40, 25);
 var obstacle2 = new Obstacle(width / cellSize / 1.2, 10, 40);
+console.log(width / cellSize);
+console.log(height / cellSize)
 
 var obstacle4 = new Obstacle(10, 10, 0);
 var obstacle5 = new Obstacle(10, 10, 20);
@@ -330,7 +332,7 @@ function paint () {
       var xyCor = snake.bodyArray[i];
       paintCell(xyCor.x, xyCor.y, '#F2EBC7', '#343642');
     }
-    ctx.font = '20px sans-serif';
+    ctx.font = '20px Open Sans';
     ctx.fillStyle = '#F2EBC7';
     ctx.fillText(score, 5, 25);
   }

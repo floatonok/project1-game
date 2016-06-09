@@ -8,10 +8,19 @@ var height = window.innerHeight;
 canvas.height = height;
 canvas.width = width;
 
-var bgMusic = new Audio ('./aWalk.mp3');
-var obstacleMusic = new Audio ('./obstacle.mp3');
-var eatMusic = new Audio ('./gotItem.mp3');
-bgMusic.play();
+var bgMusic = new Audio('./aWalk.mp3');
+var obstacleMusic = new Audio('./obstacle.mp3');
+var eatMusic = new Audio('./gotItem.mp3');
+var youDie = new Audio('./gameOver.wav');
+var loopOne = new Audio('./loopOne.wav');
+var loopTwo = new Audio('./loopTwo.wav');
+var loopThree = new Audio('./loopThree.wav');
+loopOne.loop = true;
+loopTwo.loop = true;
+loopThree.loop = true;
+bgMusic.volume = 0.2;
+obstacleMusic.volume = 0.5;
+// bgMusic.play();
 
 // Paint canvas
 function paintCanvas () {
@@ -69,12 +78,14 @@ function updateSnake () {
           createFood();
         }
         if (headX === xyObstacle.x && headY === xyObstacle.y) {
+          youDie.play();
           running = false;
           return;
         }
         // Self Collision
         for (var j = 0; j < snake.bodyArray.length; j++) {
           if (snake.bodyArray[j].x === xyObstacle.x && snake.bodyArray[j].y === xyObstacle.y) {
+            youDie.play();
             running = false;
             return;
           }
@@ -84,6 +95,7 @@ function updateSnake () {
   }
   for (var t = 2; t < snake.bodyArray.length; t++) {
     if (headX === snake.bodyArray[t].x && headY === snake.bodyArray[t].y) {
+      youDie.play();
       running = false;
       return;
     }
@@ -118,8 +130,7 @@ function updateSnake () {
   }
 
   if (!initObsSquare && headX === obstacleFood[0].x && headY === obstacleFood[0].y) {
-    obstacleMusic.currentTime = 0;
-    obstacleMusic.play();
+    loopOne.play();
     initObstacleSquare();
     hitObstacle = false;
     setTimeout(function () {
@@ -128,8 +139,7 @@ function updateSnake () {
   }
 
   if (!initObsScatter && headX === obstacleFood[1].x && headY === obstacleFood[1].y) {
-    obstacleMusic.currentTime = 0;
-    obstacleMusic.play();
+    loopTwo.play();
     initObstacleScatter();
     hitObstacle = false;
     setTimeout(function () {
@@ -138,8 +148,7 @@ function updateSnake () {
   }
 
   if (!initObsVertical && headX === obstacleFood[2].x && headY === obstacleFood[2].y) {
-    obstacleMusic.currentTime = 0;
-    obstacleMusic.play();
+    loopThree.play();
     initObstacleVertical();
     hitObstacle = false;
     setTimeout(function () {

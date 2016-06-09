@@ -55,5 +55,23 @@ body {
     list-style: none;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
-    color: white;
+    color: #962D3E;
+}
+
+h1 {
+	font-size: 5em;
+	text-align: center;
+}
+
+h2 {
+	font-size: 2em;
+	text-align: center;
+}
+
+#gameOver {
+	position: absolute;
+	width: 100%;
+	top: 40%;
+	left: 0;
+	z-index: -1;
 }

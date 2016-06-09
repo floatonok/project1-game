@@ -8,8 +8,9 @@ var height = window.innerHeight;
 canvas.height = height;
 canvas.width = width;
 
+var gameOverText = $('#gameOver');
+
 var bgMusic = new Audio('./aWalk.mp3');
-var obstacleMusic = new Audio('./obstacle.mp3');
 var eatMusic = new Audio('./gotItem.mp3');
 var youDie = new Audio('./gameOver.wav');
 var loopOne = new Audio('./loopOne.mp3');
@@ -18,8 +19,8 @@ var loopThree = new Audio('./loopThree.mp3');
 loopOne.loop = true;
 loopTwo.loop = true;
 loopThree.loop = true;
+youDie.volume = 1.0;
 bgMusic.volume = 0.2;
-obstacleMusic.volume = 0.5;
 // bgMusic.play();
 
 // Paint canvas
@@ -78,13 +79,21 @@ function updateSnake () {
           createFood();
         }
         if (headX === xyObstacle.x && headY === xyObstacle.y) {
+          loopOne.pause();
+          loopTwo.pause();
+          loopThree.pause();
           youDie.play();
+          gameOverText.css('z-index', 1);
           running = false;
           return;
         }
         // Self Collision
         for (var j = 0; j < snake.bodyArray.length; j++) {
           if (snake.bodyArray[j].x === xyObstacle.x && snake.bodyArray[j].y === xyObstacle.y) {
+            loopOne.pause();
+            loopTwo.pause();
+            loopThree.pause();
+            gameOverText.css('z-index', 1);
             youDie.play();
             running = false;
             return;
@@ -95,6 +104,10 @@ function updateSnake () {
   }
   for (var t = 2; t < snake.bodyArray.length; t++) {
     if (headX === snake.bodyArray[t].x && headY === snake.bodyArray[t].y) {
+      loopOne.pause();
+      loopTwo.pause();
+      loopThree.pause();
+      gameOverText.css('z-index', 1);
       youDie.play();
       running = false;
       return;
@@ -305,6 +318,7 @@ function paintObstacleFood () {
     paintCell(obstacleFood[i].x, obstacleFood[i].y, '#348899', '#348899');
   }
 }
+
 
 function paint () {
   if (running) {
